@@ -1,0 +1,82 @@
+Workshop: Semantic Web Ontology Development & Querying
+Movie Ontology
+Table of Contents
+Description:	1
+SPARQL Queries & Results:	1
+Ontology Pictorial Snapshot: (Movie: Fast and Furious)	4
+
+
+
+Description: 
+We have extended the Movie Ontology which uses IMDB data as its data source to create the outline of the ontology. It contains comprehensive movie information such as title, genre, director and actor, e.g., "Finding Nemo", "Animation", "Andrew Stanton" and "Alexander Gould".
+We have made several additions to the ontology such as: 
+
+Concepts :Genres, :Actress and :Territory and so on with hierarchy specified in the ontology.
+Data property dbpedia:productionStartYear, dbpedia:budget, dbpedia:gross, :countryCode, :companyName and so on
+Object property :hasCompanyLocation :isProducedBy and so on.
+
+And many individuals for checking the correctness of the ontology built thereby. Overall the ontology exceeds the triple counts by 1000 and concept counts by 150 (including classes, properties and individuals). We have identified and used Hermit reasoner to validate our ontology.
+SPARQL Queries & Results:
+Prefixes:
+PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+PREFIX owl: <http://www.w3.org/2002/07/owl#>
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
+PREFIX dbo: <http://dbpedia.org/ontology/>
+PREFIX mov: <http://www.movieontology.org/2009/10/01/movieontology.owl#>
+
+Query 1: Get all movies and actors having rating more than 7.0
+
+SELECT ?movie ?actors (str(?ratings) AS ?rating)
+	WHERE { 
+		?movie a mov:Movie;
+			 mov:hasActor ?actors;
+			mov:imdbrating ?ratings.
+		Filter(?ratings > "7.0"^^xsd:double)
+	 }
+
+
+
+Query 2: Get all movies a given actor worked in
+
+SELECT ?movie ?actors
+	WHERE { ?movie a mov:Movie;
+		mov:hasActor ?actors.
+	            ?actors dbo:birthName "Dwayne Johnson"^^xsd:string .
+
+}
+
+Query 3: Get actors, actresses and directors for a given movie
+
+SELECT ?actor ?actress ?director
+WHERE { 
+  	 ?movie a mov:Movie;
+		mov:title "Fast and Furious"^^xsd:string;  
+		mov:hasActor ?actor;
+		mov:hasActress ?actress;
+  	 	mov:hasDirector ?director .
+}
+ORDER BY (?actor)
+
+
+
+
+
+Query 4: Person who is a Director as well as actor for the same movie
+
+SELECT (str(?title) as ?Title) ?actor
+WHERE { 
+  	 ?movie a mov:Movie; mov:title ?title; 
+	 mov:hasActor ?actor; mov:hasDirector ?actor .
+}
+
+
+
+
+
+Ontology Pictorial Snapshot: (Movie: Fast and Furious)
+
+
+
+
+
